@@ -29,6 +29,7 @@ https://1heisuzuki.github.io/speech-to-text-webcam-overlay/
 - 音声からリアルタイムで文字起こしを行い，Webカメラの映像に重ねてブラウザ上で表示する
   - 認識する言語の変更
   - 表示する文章の翻訳（ログは翻訳されない）
+  - 表示する文章のひらがな化（日本語認識→日本語表示の場合のみ，ログはひらがな化されない）
 - 認識した過去ログの表示とダウンロード
 - 表示する文字のスタイルの調整
   - 調整した設定はブラウザに自動保存
@@ -63,6 +64,16 @@ Google Chrome ダウンロードページ: https://www.google.com/chrome/
 - Google Docsなどの音声入力やUDトークなど，他のツールの利用で要望を満たせるかもしれません。  
 参考: Google Docs ヘルプ / 音声で入力する https://support.google.com/docs/answer/4492226?hl=ja
 
+### ひらがなで表示したい
+- 実装しました。
+- 「音声認識：Japanese」を選択すると，「ひらがな」のチェックボックスが表示されます。
+  - チェックボックスにチェックを入れると，ひらがな変換用のデータが読み込まれます。
+- 仕組みと注意
+  - Web Speech API では，漢字や変換された状態で結果が出力されます。
+  - その結果から [kuromoji.js](#kuromojijs) により読みを取得し，表示しています。
+  - 音声から直接ひらがなを生成しているわけではないため，読みが正しく表示されなかったり，kuromoji.js の辞書に登録されていない単語や英単語等が変換前の状態で表示されたりします。
+  - つまり，「日本語音声→ひらがな」の変換ではなく，「日本語音声→文字→ひらがな読み」が行われています。
+
 ### 文字認識の結果を保存したい
 - 実装しました。
 - 保存を自動的に行いたい場合は，Google Docsなどの音声入力やUDトークなど，他のツールの利用を検討してください。  
@@ -91,6 +102,14 @@ Google Chrome ダウンロードページ: https://www.google.com/chrome/
 ### ブログや生配信で紹介したい
 - オープンに公開しているので，自由に使ってください！
 
+# 外部のライブラリ（サブモジュール）について
+サブモジュールとして追加しているレポジトリをまとめてcloneする場合は`--recursive` オプションを使用してcloneしてください。
+## kuromoji.js
+- https://github.com/takuyaa/kuromoji.js
+- 形態素解析を行うライブラリ
+- 「読み」をひらがな化する際に利用
+- License: Apache License 2.0
+
 # 関連資料
 - リモートミーティングでの音声認識の活用事例  
 https://github.com/DigitalNatureGroup/Remote_Voice_Recognition
@@ -113,3 +132,5 @@ https://webparts.cman.jp/input/textarea/
 https://qiita.com/kerupani129/items/99fd7a768538fcd33420
 - JavaScriptからGoogle翻訳を使えるAPI試してみた【コード例付き】  
 https://pisuke-code.com/js-usage-of-google-trans-api/
+- しりとり審判アプリを作った話
+https://medium.com/@Mitu217/しりとり審判アプリを作った話-294b4947b008
