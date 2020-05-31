@@ -188,7 +188,7 @@
             
             <div class="control_button_wrapper">
                 <input type="button" value="カメラ 表示/非表示"
-                    onclick="toggleClass('result_video','hidden')">
+                    onclick="toggleVideo()">
 
                 <input type="button" value="カメラ 左右反転"
                     onclick="toggleClass('result_video','mirror')">
@@ -283,12 +283,23 @@
 
     const $video = document.getElementById('result_video');  // 映像表示エリア
 
-    navigator.mediaDevices.getUserMedia({ video: { aspectRatio: { exact: 1.7777777778 } }, audio: false })
-        .then(stream => $video.srcObject = stream)
-        .catch(err => {
-            alert(`カメラ映像を読み込めませんでした。ブラウザのアクセス制限など，設定を確認してください`);
-            document.getElementById('help_on_error').style.display='block';
-        });
+    // Webカメラ表示非表示切り替え
+    function toggleVideo() {
+        if( $video.srcObject !== null ){
+            $video.srcObject.getVideoTracks().forEach( (camera) => {
+                camera.stop();
+            });
+            $video.srcObject = null;
+        }else{
+            navigator.mediaDevices.getUserMedia({ video: { aspectRatio: { exact: 1.7777777778 } }, audio: false })
+              .then(stream => $video.srcObject = stream)
+              .catch(err => {
+                  alert(`カメラ映像を読み込めませんでした。ブラウザのアクセス制限など，設定を確認してください`);
+                  document.getElementById('help_on_error').style.display='block';
+              });
+        }
+    }
+    toggleVideo();
 
 
     // 音声認識
@@ -297,6 +308,8 @@
     var recognition;
     var lang = 'ja-JP';
     var flag_timestamp = 0;
+
+
 
     function vr_function() {
         window.SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
